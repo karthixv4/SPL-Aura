@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Phudu:wght@300&display=swap');
+
+.Home{
+    font-family: 'Phudu', cursive;
+  }
+.h1 {
+    text-align: center;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  
+  .centered-div {
+    width: 80%;
+    height: 100%;
+    margin: 0 auto;
+  }
+  

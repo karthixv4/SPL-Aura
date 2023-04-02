@@ -4,9 +4,10 @@ import axios from 'axios';
 const initialState = {
     teams:[],
     team:{
-        name:'',captain:{},members:[],totalMatches:0,wins:0,draws:0,losses:0,teamPoints:0,pointsGained:0,
+        name:'',venue:'',captain:{},members:[],totalMatches:0,wins:0,draws:0,losses:0,teamPoints:0,pointsGained:0,
         pointsLost:0
     },
+    members:[],
     captains:[],
     results:[],
     points:[]
@@ -18,7 +19,6 @@ export const fetchTeams = createAsyncThunk('Teams/fetchTeams', async () => {
   });
   
   export const addTeam = createAsyncThunk('Teams/addTeam', async (team) => {
-    console.log("TEAM: ",team)
     const response = await axios.post('http://localhost:8081/team/saveTeam', team);
     return response.data;
   });
@@ -34,8 +34,13 @@ export const fetchTeams = createAsyncThunk('Teams/fetchTeams', async () => {
   });
   
   export const fetchTeamById = createAsyncThunk('Team/fetchTeamById',async(id) => {
-    const response = await axios.get(`http://localhost:8081/Team/getTeam?id=${id}`);
+    const response = await axios.get(`http://localhost:8081/team/getTeam?id=${id}`);
     return response.data
+  })
+
+  export const addPlayersToTeam = createAsyncThunk('Team/addPlayersToTeam',async(id,members)=>{
+    const response = await axios.put(`http://localhost:8081/team/addPlayersToTeam?id=${id}`,members);
+    return response.data;
   })
 
   const teamSlice = createSlice({
@@ -44,14 +49,18 @@ export const fetchTeams = createAsyncThunk('Teams/fetchTeams', async () => {
     reducers:{
       SetCaptain: (state,action) => {
         state.team.captain =action.payload
-        console.log("Cap from reducer",state.team.captain)
       },
       SetMembers:(state,action) =>{
         state.team.members = action.payload
-        console.log("mem from reducer",state.team.members)
+      },
+      addMembers:(state,action) =>{
+        state.members = action.payload
       },
       SetName:(state,action) =>{
         state.team.name = action.payload
+      },
+      SetVenue:(state,action) => {
+        state.team.venue = action.payload
       }
     },
     extraReducers:(builder) =>{
@@ -65,6 +74,18 @@ export const fetchTeams = createAsyncThunk('Teams/fetchTeams', async () => {
             state.teams = action.payload;
           })
         .addCase(fetchTeams.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+          })
+          .addCase(addPlayersToTeam.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+          })
+        .addCase(addPlayersToTeam.fulfilled, (state, action) => {
+            state.loading = false;
+            state.team.members = action.payload;
+          })
+        .addCase(addPlayersToTeam.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
           })
@@ -139,5 +160,5 @@ export const fetchTeams = createAsyncThunk('Teams/fetchTeams', async () => {
 
     }
   })
-  export const {SetCaptain,SetMembers,SetName} = teamSlice.actions
+  export const {SetCaptain,SetMembers,SetName,SetVenue,addMembers} = teamSlice.actions
   export default teamSlice.reducer

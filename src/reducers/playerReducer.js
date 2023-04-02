@@ -50,7 +50,6 @@ const playerSlice = createSlice({
   initialState,
   reducers: {
     updatePlayerDetail: (state, action) => {
-      console.log("Hey",action.payload)
       const { id, name, splRating, lichessRating } = action.payload;
       const player = state.find((player) => player.id === id);
       if (player) {
@@ -67,7 +66,6 @@ const playerSlice = createSlice({
       })
       .addCase(fetchPlayers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log("here",action.payload)
         state.players = action.payload.filter(member => member.captain === false)
         state.captains = action.payload.filter(member => member.captain === true)
       })
@@ -81,7 +79,6 @@ const playerSlice = createSlice({
       })
       .addCase(fetchPlayerById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log("here",action.payload)
         state.player=action.payload
         const { wins, losses, draws } = action.payload;
       const chartData = [

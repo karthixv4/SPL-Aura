@@ -24,7 +24,6 @@ const Home = () => {
   var datas = useSelector((state) => state.playerDetails.players)
   useEffect(() => {
     dispatch(fetchPlayers())
-  console.log("datas",datas)
   }, []);
 
   const [data, setData] = useState(datas);
